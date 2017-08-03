@@ -13,12 +13,11 @@ import com.oeno.codesquad.domain.User;
 
 @Controller
 public class UserController {
-	List<User> users = new ArrayList<>();
+	private static List<User> users = new ArrayList<>();
 	
 	// 자동으로 User 클래스의 속성을 탐색해 매칭시킴.
 	@PostMapping("/users")
 	public ModelAndView create(User user) {
-
 		users.add(user);
 		System.out.println("size : " + users.size());
 
@@ -34,14 +33,36 @@ public class UserController {
 	}
 	
 	// @PathVariable -> 동적인 값 할당.
-	@GetMapping("/users/{index}")
-	public ModelAndView show(@PathVariable int index) {
-		User user = users.get(index);
+	@GetMapping("/users/{userId}")
+	public ModelAndView show(@PathVariable String userId) {
+		User correctUser = new User();
 		
+		for (User user : users) {
+			if (user.getUserId().equals(userId)) {
+				correctUser = user;
+				break;
+			}
+		}
+
 		ModelAndView mav = new ModelAndView("user/profile");
 		
-		mav.addObject("user", user);
+		mav.addObject("user", correctUser);
 		
 		return mav;
+	}
+	
+	@GetMapping("/user/signup")
+	public ModelAndView signup() {
+		return new ModelAndView("user/form");
+	}
+	
+	@GetMapping("/user/login")
+	public ModelAndView login() {
+		return new ModelAndView("/user/login");
+	}
+	
+	@GetMapping("/user/loginFailed")
+	public ModelAndView loginFailed() {
+		return new ModelAndView("/user/login_failed");
 	}
 }
