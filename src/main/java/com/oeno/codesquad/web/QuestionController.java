@@ -38,9 +38,12 @@ public class QuestionController {
 	public ModelAndView show(@PathVariable int index) {
 		Question showQuestion = new Question();
 		
-		for (Question question : questions)
-			if (question.getIndex() == index)
+		for (Question question : questions) {
+			if (question.getIndex() == index) {
 				showQuestion = question;
+				break;
+			}
+		}
 		
 		ModelAndView mav = new ModelAndView("qna/show");
 		mav.addObject("question", showQuestion);

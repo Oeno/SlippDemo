@@ -18,8 +18,12 @@ public class UserController {
 	// 자동으로 User 클래스의 속성을 탐색해 매칭시킴.
 	@PostMapping("/users")
 	public ModelAndView create(User user) {
-		users.add(user);
-		System.out.println("size : " + users.size());
+		if (isOverlap(user.getUserId())) {
+			return null;
+		} else {
+			users.add(user);
+			System.out.println("size : " + users.size());
+		}
 
 		return new ModelAndView("redirect:/users");
 	}
@@ -44,16 +48,48 @@ public class UserController {
 			}
 		}
 
-		ModelAndView mav = new ModelAndView("user/profile");
-		
+		ModelAndView mav = new ModelAndView("/user/profile");
 		mav.addObject("user", correctUser);
 		
 		return mav;
 	}
 	
+	// 개인정보수정 페이지 띄움
+	@GetMapping("/users/{userId}/form")
+	public ModelAndView showUpdateForm(@PathVariable String userId) {
+		User correctUser = new User();
+		
+		for (User user : users) {
+			if (user.getUserId().equals(userId)) {
+				correctUser = new User(user);
+				break;
+			}
+		}
+		
+		ModelAndView mav = new ModelAndView("/user/updateForm");
+		mav.addObject("user", correctUser);
+		
+		return mav;
+	}
+	
+	// 개인정보수정 등록 (복제 방식 수정해야 )
+	@PostMapping("/users/{userId}/form")
+	public ModelAndView updateForm(User user) {
+		for (User checkUser : users) {
+			if (checkUser.getUserId().equals(user.getUserId())) {
+				checkUser.setPassword(user.getPassword());
+				checkUser.setName(user.getName());
+				checkUser.setEmail(user.getEmail());
+				break;
+			}
+		}
+
+		return new ModelAndView("redirect:/users");
+	}
+	
 	@GetMapping("/user/signup")
 	public ModelAndView signup() {
-		return new ModelAndView("user/form");
+		return new ModelAndView("/user/form");
 	}
 	
 	@GetMapping("/user/login")
@@ -64,5 +100,14 @@ public class UserController {
 	@GetMapping("/user/loginFailed")
 	public ModelAndView loginFailed() {
 		return new ModelAndView("/user/login_failed");
+	}
+	
+	public boolean isOverlap(String userId) {
+		for (User user : users) {
+			if (userId.equals(user.getUserId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
