@@ -36,19 +36,31 @@ public class QuestionController {
 	// 질문 상세 보기
 	@GetMapping("/questions/{index}")
 	public ModelAndView show(@PathVariable int index) {
-		Question showQuestion = new Question();
-		
-		for (Question question : questions) {
-			if (question.getIndex() == index) {
-				showQuestion = question;
-				break;
-			}
-		}
-		
 		ModelAndView mav = new ModelAndView("qna/show");
-		mav.addObject("question", showQuestion);
+		mav.addObject("question", questions.get(index-1));
 		
 		return mav;
+	}
+	
+	// index별 질문 수정 화면 띄우기.
+	@GetMapping("/questions/{index}/form")
+	public ModelAndView showUpdateForm(@PathVariable int index) {
+		ModelAndView mav = new ModelAndView("/qna/updateForm");
+		mav.addObject("question", questions.get(index-1));
+		
+		return mav;
+	}
+	
+	// 질문 변경 사항 적용
+	@PostMapping("questions/{index}/form")
+	public ModelAndView updateForm(Question question) {
+		int index = question.getIndex();
+		Question toUpdate = questions.get(index - 1);
+		
+		toUpdate.setTitle(question.getTitle());
+		toUpdate.setContents(question.getContents());
+
+		return new ModelAndView("redirect:/questions/{index}");
 	}
 	
 	@GetMapping("/questions")
