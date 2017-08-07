@@ -62,11 +62,6 @@ public class QuestionController {
 
 		return new ModelAndView("redirect:/questions/{index}");
 	}
-	
-	@GetMapping("/questions")
-	public ModelAndView questionForm() {
-		return new ModelAndView("qna/form");
-	}
     
 	// 현재 시간 구함
     public static String getCurrentTime(String timeFormat){

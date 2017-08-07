@@ -87,21 +87,6 @@ public class UserController {
 		return new ModelAndView("redirect:/users");
 	}
 	
-	@GetMapping("/user/signup")
-	public ModelAndView signup() {
-		return new ModelAndView("/user/form");
-	}
-	
-	@GetMapping("/user/login")
-	public ModelAndView login() {
-		return new ModelAndView("/user/login");
-	}
-	
-	@GetMapping("/user/loginFailed")
-	public ModelAndView loginFailed() {
-		return new ModelAndView("/user/login_failed");
-	}
-	
 	public boolean isOverlap(String userId) {
 		for (User user : users) {
 			if (userId.equals(user.getUserId())) {
