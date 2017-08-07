@@ -14,7 +14,7 @@ public class BaseballController {
 	static ArrayList<Integer> generatedAnswer = generateAnswer();
 
 	// 파라미터 이름이 같아야 함.
-	@GetMapping("/baseball")
+	@GetMapping("/baseball/result")
 	public ModelAndView input(String guessedAnswer) {
 		// 앞에 경로같은 거 안 줘도 됨. (templates dir에서 찾음)
 		// application.properties에 suffix 설정한 것이랑 합쳐서 파일 찾아감.
@@ -28,12 +28,12 @@ public class BaseballController {
 		return mav;
 	}
 	
-	@GetMapping("/newgame")
+	@GetMapping("/baseball/newgame")
 	public ModelAndView newgame(String inputValue) {
 		generatedAnswer = generateAnswer();
 		
 		// 애는 html 빼는 거 아님.
-		ModelAndView mav = new ModelAndView("redirect:/baseball/form.html");
+		ModelAndView mav = new ModelAndView("redirect:/baseball");
 		
 		return mav;
 	}

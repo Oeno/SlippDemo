@@ -19,12 +19,16 @@
 </head>
 <body>
 	<div class="container">
-		<h1>숫자 야구 게임 결과</h1>
-		<h2>{{feedback}}</h2>
-		<a href="/baseball/form.html">재도전</a>
-		<form action="/newgame">
-			<button type="submit" class="btn btn-default">새 게임</button>
-		</form>
+		<h1>숫자 야구 게임</h1>
+		<h2>결과: {{feedback}}</h2>
+		<div class="container">
+			<form action="/baseball">
+				<button type="submit" class="btn btn-default">재도전</button>
+			</form>
+			<form action="/baseball/newgame">
+				<button type="submit" class="btn btn-default">새 게임</button>
+			</form>
+		</div>
 	</div>
 </body>
 </html>

@@ -14,6 +14,7 @@ import com.oeno.codesquad.domain.User;
 @Controller
 public class UserController {
 	private static List<User> users = new ArrayList<>();
+	private String isActive = "active";
 	
 	// 자동으로 User 클래스의 속성을 탐색해 매칭시킴.
 	@PostMapping("/users")
@@ -68,6 +69,7 @@ public class UserController {
 		
 		ModelAndView mav = new ModelAndView("/user/updateForm");
 		mav.addObject("user", correctUser);
+		mav.addObject("userUpdateActive", isActive);
 		
 		return mav;
 	}

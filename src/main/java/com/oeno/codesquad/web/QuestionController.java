@@ -16,6 +16,7 @@ import com.oeno.codesquad.domain.Question;
 public class QuestionController {
 	private static List<Question> questions = new ArrayList<>();
 	private static int postIndex = 1;
+	private String isActive = "active";
 	
 	public static List<Question> getQuestions() {
 		return questions;
@@ -24,11 +25,11 @@ public class QuestionController {
 	// 질문 등록 후, index로 redirect
 	@PostMapping("/questions")
 	public ModelAndView question(Question question) {
-		question.setTime(getCurrentTime("YYYY-MM-DD HH:mm"));
+		question.setTime(getCurrentTime("yyyy-MM-dd HH:mm"));
 		question.setIndex(postIndex++);
 		questions.add(question);
 		
-		System.out.println("question size: " + questions.size() + " " + question.getIndex());
+		System.out.println("question size: " + questions.size() + ", Time: " + question.getTime());
 
 		return new ModelAndView("redirect:/");
 	}
@@ -38,6 +39,7 @@ public class QuestionController {
 	public ModelAndView show(@PathVariable int index) {
 		ModelAndView mav = new ModelAndView("qna/show");
 		mav.addObject("question", questions.get(index-1));
+		mav.addObject("postActive", isActive);
 		
 		return mav;
 	}
@@ -47,6 +49,7 @@ public class QuestionController {
 	public ModelAndView showUpdateForm(@PathVariable int index) {
 		ModelAndView mav = new ModelAndView("/qna/updateForm");
 		mav.addObject("question", questions.get(index-1));
+		mav.addObject("postActive", isActive);
 		
 		return mav;
 	}
