@@ -1,29 +1,42 @@
 package com.oeno.codesquad.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import com.google.common.base.Objects;
 
+@Entity
 public class Question {
-	private int index;
+	@Id
+	@GeneratedValue
+	private Long index;
+
+	@Column(nullable = false, length = 25)
 	private String writer;
+	@Column(nullable = false)
 	private String title;
+	@Column(nullable = false)
 	private String contents;
+	@Column(nullable = false, length = 16)
 	private String time;
 
-	public Question() {}
+	public Question() {
+	}
 
-	public Question(int index, String writer, String title, String contents, String time) {
-		this.index = index;
+	public Question(String writer, String title, String contents, String time) {
 		this.writer = writer;
 		this.title = title;
 		this.contents = contents;
 		this.time = time;
 	}
 
-	public int getIndex() {
+	public Long getIndex() {
 		return index;
 	}
 
-	public void setIndex(int index) {
+	public void setIndex(Long index) {
 		this.index = index;
 	}
 

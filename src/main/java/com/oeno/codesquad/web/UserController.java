@@ -1,100 +1,86 @@
 package com.oeno.codesquad.web;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.oeno.codesquad.domain.User;
+import com.oeno.codesquad.domain.UserRepository;
 
 @Controller
+@RequestMapping("/users")
 public class UserController {
-	private static List<User> users = new ArrayList<>();
+	@Autowired
+	private UserRepository userRepository;
+
+	// 상단 메뉴 바 점등
 	private String isActive = "active";
-	
-	// 자동으로 User 클래스의 속성을 탐색해 매칭시킴.
-	@PostMapping("/users")
-	public ModelAndView create(User user) {
-		if (isOverlap(user.getUserId())) {
-			return null;
-		} else {
-			users.add(user);
-			System.out.println("size : " + users.size());
-		}
+
+	// 사용자 가입 처리 후, 목록으로 redirect
+	@PostMapping("")
+	public ModelAndView createUser(User user) {
+		userRepository.save(user);
 
 		return new ModelAndView("redirect:/users");
 	}
-	
-	// get: 서버의 데이터 조회
-	@GetMapping("/users")
-	public ModelAndView list() {
+
+	// 사용자 목록 출력
+	@GetMapping("")
+	public ModelAndView showUsers() {
 		ModelAndView mav = new ModelAndView("user/list");
-		mav.addObject("users", users);
+		mav.addObject("users", userRepository.findAll());
 		return mav;
 	}
-	
-	// @PathVariable -> 동적인 값 할당.
-	@GetMapping("/users/{userId}")
-	public ModelAndView show(@PathVariable String userId) {
-		User correctUser = new User();
-		
-		for (User user : users) {
-			if (user.getUserId().equals(userId)) {
-				correctUser = user;
-				break;
-			}
-		}
 
+	// 사용자 정보 출력
+	@GetMapping("/{index}")
+	public ModelAndView showUser(@PathVariable Long index) {
 		ModelAndView mav = new ModelAndView("/user/profile");
-		mav.addObject("user", correctUser);
-		
+		mav.addObject("user", userRepository.findOne(index));
+
 		return mav;
 	}
-	
-	// 개인정보수정 페이지 띄움
-	@GetMapping("/users/{userId}/form")
-	public ModelAndView showUpdateForm(@PathVariable String userId) {
-		User correctUser = new User();
-		
-		for (User user : users) {
-			if (user.getUserId().equals(userId)) {
-				correctUser = new User(user);
-				break;
-			}
-		}
-		
+
+	// 사용자 정보 출력 (질문 관련)
+	@GetMapping("/writer/{writer}")
+	public ModelAndView showUserByUserId(@PathVariable String writer) {
+		ModelAndView mav = new ModelAndView("/user/profile");
+		mav.addObject("user", findByUserId(writer));
+
+		return mav;
+	}
+
+	// 사용자 정보 수정 페이지 출력
+	@GetMapping("/{index}/form")
+	public ModelAndView updateUserForm(@PathVariable Long index) {
 		ModelAndView mav = new ModelAndView("/user/updateForm");
-		mav.addObject("user", correctUser);
+		mav.addObject("user", userRepository.findOne(index));
 		mav.addObject("userUpdateActive", isActive);
-		
+
 		return mav;
 	}
-	
-	// 개인정보수정 등록 (복제 방식 수정해야 )
-	@PostMapping("/users/{userId}/form")
-	public ModelAndView updateForm(User user) {
-		for (User checkUser : users) {
-			if (checkUser.getUserId().equals(user.getUserId())) {
-				checkUser.setPassword(user.getPassword());
-				checkUser.setName(user.getName());
-				checkUser.setEmail(user.getEmail());
-				break;
-			}
-		}
+
+	// 사용자 정보 수정 처리 후, 목록으로 redirect
+	@PostMapping("/{index}/form")
+	public ModelAndView updateUser(@PathVariable Long index, User user) {
+		User dbUser = userRepository.findOne(index);
+		dbUser.update(user);
+		userRepository.save(dbUser);
 
 		return new ModelAndView("redirect:/users");
 	}
-	
-	public boolean isOverlap(String userId) {
-		for (User user : users) {
-			if (userId.equals(user.getUserId())) {
-				return true;
-			}
+
+	// userId로 User 검색 (존재하지 않으면 null 반환)
+	public User findByUserId(String userId) {
+		for (User user : userRepository.findAll()) {
+			if (user.getUserId().equals(userId))
+				System.out.println(user.getUserId() + " " + userId);
+			return user;
 		}
-		return false;
+		return null;
 	}
 }

@@ -17,11 +17,12 @@
 					<!-- list의 size만큼 for문을 도는 handlers 문법 -->
 					{{#users}}
 					<tr>
-						<th scope="row">{{@index}}</th>
-						<td><a href="/users/{{userId}}">{{userId}}</a></td>
+						<th scope="row">{{index}}</th>
+						<td><a href="/users/{{index}}">{{userId}}</a></td>
 						<td>{{name}}</td>
 						<td>{{email}}</td>
-						<td><a href="/users/{{userId}}/form" class="btn btn-success" role="button">수정</a></td>
+						<td><a href="/users/{{index}}/form" class="btn btn-success"
+							role="button">수정</a></td>
 					</tr>
 					{{/users}}
 				</tbody>
