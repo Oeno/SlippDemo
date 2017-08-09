@@ -84,10 +84,21 @@ public class User {
 		this.email = email;
 	}
 
+	// 사용자 정보 수정 처리
 	public void update(User user) {
 		this.password = user.password;
 		this.name = user.name;
 		this.email = user.email;
+	}
+	
+	// 비밀번호 체크
+	public boolean isCorrectPassword(String requestPassword) {
+		return this.password.equals(requestPassword);
+	}
+	
+	// 아이디 체크
+	public boolean isCorrectIndex(Long requestIndex) {
+		return this.index == requestIndex;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.oeno.codesquad.web;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,7 +58,10 @@ public class UserController {
 
 	// 사용자 정보 수정 페이지 출력
 	@GetMapping("/{index}/form")
-	public ModelAndView updateUserForm(@PathVariable Long index) {
+	public ModelAndView updateUserForm(@PathVariable Long index, HttpSession session) {
+		if (!isMatchUser(index, session)) {
+			return new ModelAndView("redirect:/");
+		}
 		ModelAndView mav = new ModelAndView("/user/updateForm");
 		mav.addObject("user", userRepository.findOne(index));
 		mav.addObject("userUpdateActive", isActive);
@@ -66,7 +71,10 @@ public class UserController {
 
 	// 사용자 정보 수정 처리 후, 목록으로 redirect
 	@PostMapping("/{index}/form")
-	public ModelAndView updateUser(@PathVariable Long index, User user) {
+	public ModelAndView updateUser(@PathVariable Long index, User user, HttpSession session) {
+		if (!isMatchUser(index, session)) {
+			return new ModelAndView("redirect:/");
+		}
 		User dbUser = userRepository.findOne(index);
 		dbUser.update(user);
 		userRepository.save(dbUser);
@@ -82,5 +90,57 @@ public class UserController {
 			return user;
 		}
 		return null;
+	}
+
+	// 로그인 처리
+	@PostMapping("/login")
+	public ModelAndView login(String userId, String password, HttpSession session) {
+		User dbUser = userRepository.findByUserId(userId);
+
+		if (dbUser == null)
+			return new ModelAndView("redirect:/users/loginFailed");
+		if (!dbUser.isCorrectPassword(password))
+			return new ModelAndView("redirect:/users/loginFailed");
+
+		session.setAttribute("loginedUser", dbUser);
+
+		return new ModelAndView("redirect:/");
+	}
+	
+	// 로그아웃 처리
+	@GetMapping("/logout")
+	public ModelAndView logout(HttpSession session) {
+		try {
+			session.removeAttribute("loginedUser");
+			return new ModelAndView("redirect:/");
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("redirect:/");
+		}
+	}
+	
+
+	// 유효한 사용자 검사
+	public static boolean isValidUser(HttpSession session) {
+		Object tempUser = session.getAttribute("loginedUser");
+		if (tempUser == null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	// 일치하는 사용자 검사
+	public static boolean isMatchUser(Long index, HttpSession session) {
+		Object tempUser = session.getAttribute("loginedUser");
+		if (tempUser == null) {
+			return false;
+		}
+		final User loginedUser = (User) tempUser;
+		if (!loginedUser.isCorrectIndex(index)) {
+			return false;
+		}
+		
+		return true;
 	}
 }
