@@ -2,19 +2,25 @@ package com.oeno.codesquad.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.google.common.base.Objects;
+import com.oeno.codesquad.CodesquadApplication;
 
 @Entity
 public class Question {
 	@Id
 	@GeneratedValue
 	private Long index;
+	
+	@ManyToOne
+	@JoinColumn(foreignKey = @ForeignKey(name = "fk_question_to_user"))
+	private User user;
 
-	@Column(nullable = false, length = 25)
-	private String writer;
 	@Column(nullable = false)
 	private String title;
 	@Column(nullable = false)
@@ -23,13 +29,18 @@ public class Question {
 	private String time;
 
 	public Question() {
+		this.index = 0L;
+		this.user = null;
+		this.title = "";
+		this.contents = "";
+		this.time = "";
 	}
 
-	public Question(String writer, String title, String contents, String time) {
-		this.writer = writer;
+	public Question(User user, String title, String contents) {
+		this.user = user;
 		this.title = title;
 		this.contents = contents;
-		this.time = time;
+		this.time = CodesquadApplication.getCurrentTime("yyyy-MM-dd HH:mm");
 	}
 
 	public Long getIndex() {
@@ -40,14 +51,14 @@ public class Question {
 		this.index = index;
 	}
 
-	public String getWriter() {
-		return writer;
+	public User getUser() {
+		return user;
 	}
 
-	public void setWriter(String writer) {
-		this.writer = writer;
+	public void setUser(User user) {
+		this.user = user;
 	}
-
+	
 	public String getTitle() {
 		return title;
 	}
@@ -71,10 +82,15 @@ public class Question {
 	public void setTime(String time) {
 		this.time = time;
 	}
+	
+	public void update(Question question) {
+		this.title = question.title;
+		this.contents = question.contents;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(index, writer, title, contents, time);
+		return Objects.hashCode(this.index, this.user, this.title, this.contents, this.time);
 	}
 
 	@Override
@@ -85,9 +101,8 @@ public class Question {
 			return false;
 		final Question question = (Question) obj;
 
-		return Objects.equal(this.index, question.index) && Objects.equal(this.writer, question.writer)
+		return Objects.equal(this.index, question.index) && Objects.equal(this.user, question.user)
 				&& Objects.equal(this.title, question.title) && Objects.equal(this.contents, question.contents)
 				&& Objects.equal(this.time, question.time);
 	}
-
 }
