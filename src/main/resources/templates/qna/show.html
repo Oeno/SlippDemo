@@ -15,10 +15,10 @@
 								class="article-author-thumb" alt="">
 						</div>
 						<div class="article-header-text">
-							<a href="/users/{{question.user.index}}" class="article-author-name">{{question.user.name}}</a>
-							<a href="/questions/{{question.index}}"
-								class="article-header-time" title="퍼머링크"> {{question.time}}
-								<i class="icon-link"></i>
+							<a href="/users/{{question.user.index}}"
+								class="article-author-name">{{question.user.name}}</a> <a
+								href="/questions/{{question.index}}" class="article-header-time"
+								title="퍼머링크"> {{question.time}} <i class="icon-link"></i>
 							</a>
 						</div>
 					</div>
@@ -45,7 +45,7 @@
 							<strong>0</strong>개의 의견
 						</p>
 						<div class="qna-comment-slipp-articles">
-						{{#answers}}
+							{{#comments}}
 							<article class="article" id="answer-{{index}}">
 								<div class="article-header">
 									<div class="article-header-thumb">
@@ -53,9 +53,9 @@
 											class="article-author-thumb" alt="">
 									</div>
 									<div class="article-header-text">
-										<a href="/users/{{user.index}}" class="article-author-name">{{user.index}}</a> <a
-											href="#answer-{{index}}" class="article-header-time" title="퍼머링크">
-											{{time}} </a>
+										<a href="/users/{{user.index}}" class="article-author-name">{{user.name}}</a>
+										<a href="#answer-{{index}}" class="article-header-time"
+											title="퍼머링크"> {{time}} </a>
 									</div>
 								</div>
 								<div class="article-doc comment-doc">
@@ -67,7 +67,8 @@
 											href="/questions/{{question.index}}/comments/{{index}}/form">수정</a></li>
 										<li>
 											<form class="delete-answer-form"
-												action="/questions/{{question.index}}/comments/{{index}}" method="POST">
+												action="/questions/{{question.index}}/comments/{{index}}"
+												method="POST">
 												<input type="hidden" name="_method" value="DELETE">
 												<button type="submit" class="delete-answer-button">삭제</button>
 											</form>
@@ -75,10 +76,11 @@
 									</ul>
 								</div>
 							</article>
-							{{/answers}}
-							<form class="submit-write" method="post" action="/questions/{{question.index}}/comments">
+							{{/comments}}
+							<form class="submit-write" method="post"
+								action="/questions/{{question.index}}/comments">
 								<div class="form-group" style="padding: 14px;">
-									<textarea class="form-control" placeholder=""></textarea>
+									<textarea class="form-control" name="contents" id="contents"></textarea>
 								</div>
 								<button class="btn btn-success pull-right" type="submit">등록</button>
 								<div class="clearfix" />

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.oeno.codesquad.domain.CommentRepository;
 import com.oeno.codesquad.domain.Question;
 import com.oeno.codesquad.domain.QuestionRepository;
 import com.oeno.codesquad.domain.User;
@@ -20,6 +21,9 @@ import com.oeno.codesquad.domain.User;
 public class QuestionController {
 	@Autowired
 	private QuestionRepository questionRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 
 	// 상단 메뉴 바 점등
 	private String isActive = "active";
@@ -57,6 +61,7 @@ public class QuestionController {
 		
 		ModelAndView mav = new ModelAndView("qna/show");
 		mav.addObject("question", questionRepository.findOne(index));
+		mav.addObject("comments", commentRepository.findByQuestionIndexOrderByIndex(index));
 		mav.addObject("postActive", isActive);
 
 		return mav;
@@ -101,7 +106,7 @@ public class QuestionController {
 		if (!UserController.isMatchUser(dbQuestion.getUser().getIndex(), session)) {
 			return new ModelAndView("redirect:/questions/{index}");
 		}
-		
+
 		questionRepository.delete(index);
 		return new ModelAndView("redirect:/");
 	}
